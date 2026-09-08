@@ -3,7 +3,7 @@
 from __future__ import annotations
 import hashlib,json,os,subprocess,sys,urllib.request
 from pathlib import Path
-REPOSITORY="Anurag9000/CO-project"; CONTROLLER_COMMIT="a5caedea0618ecce1cef38e4e9b7d4fe14fe76ab"; CONTROLLER_BLOB="3acfd37ae22e887b5a7bcd42b04c9a288593abae"; SOURCE=f"https://raw.githubusercontent.com/Anurag9000/RigorousRAG/{CONTROLLER_COMMIT}/tools/universal_training_controller_entry.py"; ROOT=Path(__file__).resolve().parent
+REPOSITORY="Anurag9000/CO-project"; CONTROLLER_COMMIT="1239f040b7b96dba77f056d16e1b4da9723a42c9"; CONTROLLER_BLOB="4ba01878e41c736c09503040c5498f66beffffa0"; SOURCE=f"https://raw.githubusercontent.com/Anurag9000/RigorousRAG/{CONTROLLER_COMMIT}/tools/universal_training_controller_entry.py"; ROOT=Path(__file__).resolve().parent
 PROFILE={"repository":REPOSITORY,"preferred_training_entrypoints":["train.py","training.py","run_training.py","scripts/train.py","scripts/train_all.py","scripts/run_training.py"],"preferred_dataset_entrypoints":["prepare_data.py","scripts/prepare_data.py","scripts/download_data.py","scripts/materialize_datasets.py","scripts/dataset_setup.py"],"dynamic_registry_covers":[],"extra_jobs":[],"ignore_entrypoints":["run_all_training.py"],"strict_coverage":True,"require_native_resume":True,"require_exact_resume":True,"require_training_exact_resume":True,"require_training_early_stopping":True,"require_dag_enforcement":True,"require_model_surface_accounting":True,"require_literal_opf_mechanism_parity":True,"require_well_formed_training_exemptions":True,"require_registry_member_accounting":True,"require_dynamic_registry_accounting":True,"require_declared_combination_accounting":True}
 def _sha(b): return hashlib.sha1(f"blob {len(b)}\0".encode()+b).hexdigest()
 def main():
