@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EXCLUDED_PARTS = {".git", ".training_control", "training_control", "__pycache__", ".venv", "venv", "build", "dist"}
+REQUIRED_RUNTIME_FILES = ("Assembler.py", "Simulator.py")
 TRAINING_ATTRS = {"fit", "fit_generator", "partial_fit", "train_on_batch", "backward", "zero_grad", "step", "training_step", "optimizer_step", "manual_backward"}
 TRAINING_NAMES = {"Trainer", "Seq2SeqTrainer", "TrainingArguments", "Optimizer", "SGD", "Adam", "AdamW", "Adagrad", "Adadelta", "RMSprop", "LBFGS", "SparseAdam"}
 TRAINING_MODULE_PREFIXES = ("torch.optim", "tensorflow.keras.optimizers", "keras.optimizers", "pytorch_lightning", "lightning.pytorch")
@@ -51,6 +52,11 @@ def audit() -> dict[str, object]:
             continue
         scanner = Scanner(path); scanner.visit(tree); findings.extend(scanner.findings)
     unresolved: list[dict[str, object]] = []
+    missing_required = [name for name in REQUIRED_RUNTIME_FILES if not (ROOT / name).is_file()]
+    if missing_required:
+        unresolved.append({"type": "required_runtime_source_missing", "values": missing_required})
+    if not files:
+        unresolved.append({"type": "no_runtime_python_source_scanned", "values": []})
     if parse_errors: unresolved.append({"type": "python_parse_errors", "values": parse_errors})
     if findings: unresolved.append({"type": "retained_training_primitives_detected", "values": [asdict(x) for x in findings]})
-    return {"schema_version": 1, "repository": "Anurag9000/CO-project", "classification": "non_trainable_assembler_simulator" if not unresolved else "training_surface_detected", "retained_python_files": [p.relative_to(ROOT).as_posix() for p in sorted(files)], "training_findings": [asdict(x) for x in findings], "parse_errors": parse_errors, "unresolved": unresolved, "complete": not unresolved, "source_configuration_only": True, "training_executed_by_audit": False}
+    return {"schema_version": 1, "repository": "Anurag9000/CO-project", "classification": "non_trainable_assembler_simulator" if not unresolved else "training_surface_detected", "retained_python_files": [p.relative_to(ROOT).as_posix() for p in sorted(files)], "required_runtime_files": list(REQUIRED_RUNTIME_FILES), "missing_required_runtime_files": missing_required, "training_findings": [asdict(x) for x in findings], "parse_errors": parse_errors, "unresolved": unresolved, "complete": not unresolved, "source_configuration_only": True, "training_executed_by_audit": False}
