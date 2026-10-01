@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import ast
+import runpy
 import tempfile
 import unittest
 from pathlib import Path
@@ -74,19 +74,10 @@ class NonTrainableAuthorityTests(unittest.TestCase):
             ))
 
     def test_root_profile_does_not_apply_training_resume_to_audit_job(self) -> None:
-        source = (Path(__file__).resolve().parent / "run_all_training.py").read_text(
-            encoding="utf-8"
+        namespace = runpy.run_path(
+            str(Path(__file__).resolve().parent / "run_all_training.py")
         )
-        tree = ast.parse(source)
-        assignments = {
-            node.targets[0].id: ast.literal_eval(node.value)
-            for node in tree.body
-            if isinstance(node, ast.Assign)
-            and len(node.targets) == 1
-            and isinstance(node.targets[0], ast.Name)
-            and node.targets[0].id == "PROFILE"
-        }
-        profile = assignments["PROFILE"]
+        profile = namespace["PROFILE"]
         self.assertFalse(profile["require_native_resume"])
         self.assertFalse(profile["require_exact_resume"])
         self.assertFalse(profile["require_workload_surface_accounting"])
